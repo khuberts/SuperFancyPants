@@ -74,19 +74,19 @@ namespace SuperFancyPants.Business
             Console.WriteLine($"Welcome {PlayerName}, please find the Exit!");
         }
 
-        private void PrintLambda()
+        public void PrintLambda()
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.Write("λ ");
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private bool ShouldEnd()
+        public bool ShouldEnd()
         {
             return _currentRoom.Finish;
         }
 
-        private void End()
+        public void End()
         {
             Console.WriteLine("--------------------------");
             Console.WriteLine("-----       END     ------");
