@@ -1,14 +1,27 @@
-﻿namespace SuperFancyPants
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using SuperFancyPants.Domain.Enums;
+
+namespace SuperFancyPants.Domain
 {
     class Room
     {
+        public IDictionary<EDirection, Room> ConnectedRooms = new Dictionary<EDirection, Room>();
         public string Name { get; set; }
-        public string Message { get; set; }
+        public string Description { get; set; }
+        public bool Finish { get; set; }
 
-        public Room(string name, string message)
+        public void PrintInfo()
         {
-            Name = name;
-            Message = message;
+            Console.WriteLine($"Currently in {Name}");
+            Console.WriteLine($"Possible directions are: ");
+
+            foreach (var connectedRoomsKey in ConnectedRooms.Keys)
+            {
+                Console.Write($"{connectedRoomsKey:G}");
+            }
+            Console.Write(Environment.NewLine);
         }
     }
 }

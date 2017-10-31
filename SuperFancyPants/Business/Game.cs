@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using SuperFancyPants.Domain;
 
-namespace SuperFancyPants
+namespace SuperFancyPants.Business
 {
     public class Game
     {
@@ -110,7 +111,7 @@ namespace SuperFancyPants
                 }
                 if (ActiveRoom != null)
                 {
-                    Console.WriteLine(ActiveRoom.Name + " " + ActiveRoom.Message);
+                    Console.WriteLine(ActiveRoom.Name + " " + ActiveRoom.Description);
                 }
 
                 if (!isAlive)
