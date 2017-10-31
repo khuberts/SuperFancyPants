@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Business\" />
     <Folder Include="Domain\Enums\" />
   </ItemGroup>
 
