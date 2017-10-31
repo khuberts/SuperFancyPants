@@ -16,8 +16,6 @@ namespace SuperFancyPants.Business
             Setup();
 
             Initialize();
-
-            Start();
         }
 
         private void Setup()
