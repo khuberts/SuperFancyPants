@@ -1,136 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
 using SuperFancyPants.Domain;
+using SuperFancyPants.Domain.Enums;
 
 namespace SuperFancyPants.Business
 {
     public class Game
     {
-        private string Name { get; set; }
-        private Room ActiveRoom { get; set; }
+        private Room _currentRoom;
 
-        public void StartGame()
+        public string PlayerName { get; private set; }
+
+        public void InitializeAndStartGame()
         {
+            Setup();
+
             Initialize();
 
             Start();
         }
 
-        private void End()
+        private void Setup()
         {
-            Console.WriteLine("----------------------------");
-            Console.WriteLine("Dank voor het mee doen!");
-            Console.WriteLine("----------------------------");    
-        }
+            var entrance = new Room() {Description = "Main entrance to the Castle", Name = "Entrance"};
+            var livingRoom = new Room() {Description = "Welcome to the LivingRoom", Name = "LivingRoom " };
+            var diner = new Room() {Description = "The diner looks nice, doesn't it?", Name = "Diner" };
+            var kitchen = new Room() {Description = "We have some food in the kitchen.", Name = "Kitchen" };
+            var upstairs = new Room() {Description = "This is upstairs", Name = "Upstairs" };
+            var yard = new Room() {Description = "This is the yard", Name = "Yard" };
 
-        private void Start()
-        {
-            Console.WriteLine("Voer naam in:");
-            while (string.IsNullOrEmpty(Name))
-            {
-                Name = Console.ReadLine();
+            entrance.ConnectedRooms.Add(EDirection.North, livingRoom);
+            entrance.ConnectedRooms.Add(EDirection.South, yard);
 
-                if (string.IsNullOrEmpty(Name))
-                {
-                    Console.WriteLine("Je moet je naam invoeren om het spel te kunnen spelen!!");
-                }
+            yard.ConnectedRooms.Add(EDirection.North, entrance);
 
-                if (Name.Trim().ToLower() == "help")
-                {
-                    Console.WriteLine("Je moet eerst een naam invoeren voordat je commands uit kan voeren");
-                }
-            }
+            livingRoom.ConnectedRooms.Add(EDirection.Up, upstairs);
+            livingRoom.ConnectedRooms.Add(EDirection.East, diner);
 
-            Console.WriteLine($"Welkom {Name}");
-            Console.WriteLine("Het is vandaag:");
-            Console.WriteLine(DateTime.Now);
+            upstairs.ConnectedRooms.Add(EDirection.Down, livingRoom);
 
-            IList<Room> roomList = new List<Room>();
+            diner.ConnectedRooms.Add(EDirection.North, kitchen);
 
-            roomList.Add(new Room("Slaapkamer", "Je bent dood"));
-            roomList.Add(new Room("Woonkamer", "Je mag naar de volgende kamer"));
-            roomList.Add(new Room("Berging", "Je kan niks vinden en mag naar een andere kamer"));
-
-            bool isAlive = true;
-
-            while (isAlive)
-            {
-                string command = Console.ReadLine();
-
-                if (command.Trim().ToLower() == "help")
-                {
-                    Console.WriteLine("     help - Commando om alle mogelijke commands op te vragen");
-                    Console.WriteLine("     kamer 'Woonkamer' - Navigeer naar een kamer");
-                    Console.WriteLine("     kamerlijst - Vraag een lijst van alle beschikbare kamers op");
-                }
-
-                if (command.Trim().ToLower() == "kamerlijst")
-                {
-                    Console.WriteLine("----------------------------");
-
-                    foreach (var room in roomList)
-                    {
-                        Console.WriteLine(room.Name);
-                    }
-                    Console.WriteLine("----------------------------");
-                }
-
-                switch (command.Trim().ToLower())
-                {
-                    case "kamer slaapkamer":
-                        foreach (var room in roomList)
-                        {
-                            if (room.Name == "Slaapkamer")
-                            {
-                                ActiveRoom = room;
-                                isAlive = false;
-                            }
-                        }
-                        break;
-
-                    case "kamer woonkamer":
-                        foreach (var room in roomList)
-                        {
-                            if (room.Name == "Woonkamer")
-                            {
-                                ActiveRoom = room;
-                            }
-                        }
-                        break;
-
-                    case "kamer berging":
-                        foreach (var room in roomList)
-                        {
-                            if (room.Name == "Berging")
-                            {
-                                ActiveRoom = room;
-                            }
-                        }
-                        break;
-
-                }
-                if (ActiveRoom != null)
-                {
-                    Console.WriteLine(ActiveRoom.Name + " " + ActiveRoom.Description);
-                }
-
-                if (!isAlive)
-                {
-                    End();
-                }
-            }
-
-
+            _currentRoom = entrance;
         }
 
         private void Initialize()
         {
-            Console.Title = "SuperFancyPants";
-            Console.BackgroundColor = ConsoleColor.White;
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+
+            Console.WriteLine("------------------------------------------------------------------------------");
+            Console.Write("------------------------------");
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("----------------------------");
-            Console.WriteLine("Welkom bij <SuperFancyPants>");
-            Console.WriteLine("----------------------------");
+            Console.Write("SUPER FANCY PANTS");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("------------------------------------------------------------------------------");
+
+            SetPlayerName();
+        }
+
+        private void SetPlayerName()
+        {
+            Console.WriteLine("Hello new player, what is your name?");
+            PrintLambda();
+
+            PlayerName = Console.ReadLine();
+
+            if (string.IsNullOrWhiteSpace(PlayerName))
+            {
+                SetPlayerName();
+            }
+
+            Console.WriteLine($"Welcome {PlayerName}, please find the Exit!");
+        }
+
+        private void PrintLambda()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("λ ");
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        private bool ShouldEnd()
+        {
+            return _currentRoom.Finish;
+        }
+
+        private void End()
+        {
+            Console.WriteLine("--------------------------");
+            Console.WriteLine("-----       END     ------");
+            Console.WriteLine("--------------------------");
+        }
+
+        public void DescribeLocation()
+        {
+            Console.WriteLine($"-- You are currently in {_currentRoom.Name}. --");
+            Console.WriteLine($"-- {_currentRoom.Description}");
+
+            if (_currentRoom.Finish)
+            {
+                Console.WriteLine("YOU HAVE MADE IT TO THE FINISH!");
+                var str = @"╔═══╗─────────────╔╗───╔╗───╔╗
+║╔═╗║────────────╔╝╚╗──║║──╔╝╚╗
+║║─╚╬══╦═╗╔══╦═╦═╩╗╔╬╗╔╣║╔═╩╗╔╬╦══╦═╗╔══╗
+║║─╔╣╔╗║╔╗╣╔╗║╔╣╔╗║║║║║║║║╔╗║║╠╣╔╗║╔╗╣══╣
+║╚═╝║╚╝║║║║╚╝║║║╔╗║╚╣╚╝║╚╣╔╗║╚╣║╚╝║║║╠══║
+╚═══╩══╩╝╚╩═╗╠╝╚╝╚╩═╩══╩═╩╝╚╩═╩╩══╩╝╚╩══╝
+──────────╔═╝║
+──────────╚══╝";
+                Console.WriteLine(str);
+                Console.WriteLine("-----------------------");
+            }
+        }
+
+        public void MoveToDirection(EDirection direction)
+        {
+            if (_currentRoom.ConnectedRooms.ContainsKey(direction))
+            {
+                _currentRoom = _currentRoom.ConnectedRooms[direction];
+            }
+            else
+            {
+                Console.WriteLine($"Cannot move to {direction}.");
+            }
+        }
+
+        public void LookAround()
+        {
+            _currentRoom.PrintInfo();
         }
     }
 }
