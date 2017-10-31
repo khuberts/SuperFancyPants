@@ -23,7 +23,7 @@ namespace SuperFancyPants.Business
             var entrance = new Room() {Description = "Main entrance to the Castle", Name = "Entrance"};
             var livingRoom = new Room() {Description = "Welcome to the LivingRoom", Name = "LivingRoom " };
             var diner = new Room() {Description = "The diner looks nice, doesn't it?", Name = "Diner" };
-            var kitchen = new Room() {Description = "We have some food in the kitchen.", Name = "Kitchen" };
+            var kitchen = new Room() {Description = "We have some food in the kitchen.", Name = "Kitchen", Finish = true };
             var upstairs = new Room() {Description = "This is upstairs", Name = "Upstairs" };
             var yard = new Room() {Description = "This is the yard", Name = "Yard" };
 
