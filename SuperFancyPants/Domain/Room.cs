@@ -15,7 +15,7 @@ namespace SuperFancyPants.Domain
         public void PrintInfo()
         {
             Console.WriteLine($"Currently in {Name}");
-            Console.WriteLine($"Possible directions are: ");
+            Console.WriteLine("Possible directions are: ");
 
             foreach (var connectedRoomsKey in ConnectedRooms.Keys)
             {
